@@ -24,6 +24,7 @@
 #![warn(clippy::needless_borrow)]
 #![warn(clippy::needless_pass_by_value)]
 #![warn(clippy::option_option)]
+#![warn(clippy::or_fun_call)]
 #![deny(clippy::print_stderr)]
 #![deny(clippy::print_stdout)]
 #![warn(clippy::rc_buffer)]
@@ -458,7 +459,7 @@ where
 
     #[cfg(feature = "harden")]
     if !config.application().permit_debugging {
-        if let Err(e) = process::enable_process_hardening() {
+        if let Err(e) = tor_bin_common::process::harden::enable_process_hardening() {
             error!(
                 "Encountered a problem while enabling hardening. To disable this feature, set application.permit_debugging to true."
             );

@@ -24,6 +24,7 @@
 #![warn(clippy::needless_borrow)]
 #![warn(clippy::needless_pass_by_value)]
 #![warn(clippy::option_option)]
+#![warn(clippy::or_fun_call)]
 #![deny(clippy::print_stderr)]
 #![deny(clippy::print_stdout)]
 #![warn(clippy::rc_buffer)]
@@ -197,7 +198,7 @@ mod test {
                     .unwrap();
 
             // Here we list any recommended protocols that are not yet always-on.
-            let permitted_missing: tor_protover::Protocols = [].into_iter().collect();
+            let permitted_missing = tor_protover::Protocols::new();
             let unsupported = rec.difference(&pr);
             assert!(unsupported.difference(&permitted_missing).is_empty());
         }

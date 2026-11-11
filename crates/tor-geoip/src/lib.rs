@@ -24,6 +24,7 @@
 #![warn(clippy::needless_borrow)]
 #![warn(clippy::needless_pass_by_value)]
 #![warn(clippy::option_option)]
+#![warn(clippy::or_fun_call)]
 #![deny(clippy::print_stderr)]
 #![deny(clippy::print_stdout)]
 #![warn(clippy::rc_buffer)]
@@ -50,6 +51,8 @@
 
 // TODO #1645 (either remove this, or decide to have it everywhere)
 #![cfg_attr(not(all(feature = "full")), allow(unused))]
+// TODO: add to the list maintained by maint/add_warning once it's available on all crates
+#![warn(unnameable_types)]
 
 use crate::dense_range_map::DenseRangeMap;
 pub use crate::err::Error;
@@ -390,17 +393,17 @@ where
     let mut split = line.split(',');
     let from = split
         .next()
-        .ok_or(Error::BadFormat("empty line somehow?".into()))?
+        .ok_or_else(|| Error::BadFormat("empty line somehow?".into()))?
         .parse::<T>()?
         .to_int();
     let to = split
         .next()
-        .ok_or(Error::BadFormat("line with insufficient commas".into()))?
+        .ok_or_else(|| Error::BadFormat("line with insufficient commas".into()))?
         .parse::<T>()?
         .to_int();
     let cc = split
         .next()
-        .ok_or(Error::BadFormat("line with insufficient commas".into()))?;
+        .ok_or_else(|| Error::BadFormat("line with insufficient commas".into()))?;
     let cc = match cc {
         "" => None,
         cc => OptionCc::from_str(cc)?.0,

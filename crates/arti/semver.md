@@ -1,1 +1,0 @@
-DEPRECATED: the `keymgr` feature

@@ -24,6 +24,7 @@
 #![warn(clippy::needless_borrow)]
 #![warn(clippy::needless_pass_by_value)]
 #![warn(clippy::option_option)]
+#![warn(clippy::or_fun_call)]
 #![deny(clippy::print_stderr)]
 #![deny(clippy::print_stdout)]
 #![warn(clippy::rc_buffer)]
@@ -50,6 +51,8 @@
 
 // TODO #1645 (either remove this, or decide to have it everywhere)
 #![cfg_attr(not(all(feature = "full", feature = "experimental")), allow(unused))]
+// TODO: add to the list maintained by maint/add_warning once it's available on all crates
+#![warn(unnameable_types)]
 
 // TODO: write more comprehensive documentation when the API is a bit more
 // stable
@@ -90,6 +93,7 @@ pub use key_specifier::CertSpecifierPattern;
 #[cfg(feature = "keymgr")]
 pub use {
     keystore::arti::ArtiNativeKeystore,
+    keystore::ctor::{CTorClientKeystore, CTorServiceKeystore},
     keystore::{Keystore, KeystoreEntryResult},
     mgr::{KeyMgr, KeyMgrBuilder, KeyMgrBuilderError, KeystoreEntry},
     ssh_key,
@@ -97,9 +101,6 @@ pub use {
 
 #[cfg(all(feature = "keymgr", feature = "ephemeral-keystore"))]
 pub use keystore::ephemeral::ArtiEphemeralKeystore;
-
-#[cfg(all(feature = "keymgr", feature = "ctor-keystore"))]
-pub use keystore::ctor::{CTorClientKeystore, CTorServiceKeystore};
 
 #[doc(hidden)]
 pub use key_specifier::derive as key_specifier_derive;

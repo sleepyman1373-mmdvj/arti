@@ -24,6 +24,7 @@
 #![warn(clippy::needless_borrow)]
 #![warn(clippy::needless_pass_by_value)]
 #![warn(clippy::option_option)]
+#![warn(clippy::or_fun_call)]
 #![deny(clippy::print_stderr)]
 #![deny(clippy::print_stdout)]
 #![warn(clippy::rc_buffer)]
@@ -53,6 +54,8 @@
 // Overrides specific to this crate:
 #![allow(clippy::print_stderr)]
 #![allow(clippy::print_stdout)]
+// TODO: add to the list maintained by maint/add_warning once it's available on all crates
+#![warn(unnameable_types)]
 
 mod authority_plugin;
 

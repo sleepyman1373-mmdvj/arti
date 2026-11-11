@@ -24,6 +24,7 @@
 #![warn(clippy::needless_borrow)]
 #![warn(clippy::needless_pass_by_value)]
 #![warn(clippy::option_option)]
+#![warn(clippy::or_fun_call)]
 #![deny(clippy::print_stderr)]
 #![deny(clippy::print_stdout)]
 #![warn(clippy::rc_buffer)]
@@ -48,6 +49,19 @@
 #![allow(recursion_depth_exceeding_limit)] // arti#2715, rust/issues/159228
 //! <!-- @@ end lint list maintained by maint/add_warning @@ -->
 
+// TODO: add to the list maintained by maint/add_warning once it's available on all crates
+#![warn(unnameable_types)]
+
 pub mod metrics;
 #[cfg_attr(not(feature = "opentelemetry"), path = "opentelemetry_stub.rs")]
 pub mod opentelemetry;
+
+/// Dummy module
+///
+/// Not `[lints.cargo]` in `Cargo.toml` because it wants to be conditional
+#[allow(unused, clippy::single_component_path_imports)]
+mod _suppress_unused_crate_warnings {
+    // Some conditional things use tor_config_path.  Don't try to replicate the precise cfg.
+    #[cfg(not(all(feature = "full", feature = "experimental")))]
+    use tor_config_path;
+}

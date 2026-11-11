@@ -24,6 +24,7 @@
 #![warn(clippy::needless_borrow)]
 #![warn(clippy::needless_pass_by_value)]
 #![warn(clippy::option_option)]
+#![warn(clippy::or_fun_call)]
 #![deny(clippy::print_stderr)]
 #![deny(clippy::print_stdout)]
 #![warn(clippy::rc_buffer)]
@@ -55,7 +56,9 @@ mod sink_try_send;
 mod sinkext;
 mod watch;
 
+pub mod bw_pool;
 pub mod counting_streams;
+pub mod global_rate_limit;
 pub mod oneshot_broadcast;
 pub mod peekable_stream;
 pub mod rate_limited_writer;

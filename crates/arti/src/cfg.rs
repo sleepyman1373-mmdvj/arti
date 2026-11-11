@@ -571,6 +571,7 @@ mod test {
                 "proxy.socket_send_buf_size",
                 "proxy.socket_recv_buf_size",
                 "application.defer_bootstrap",
+                "address_filter.allow_resolving_local_addrs",
             ],
         );
 
@@ -1498,7 +1499,7 @@ example config file {which:?}, uncommented={uncommented:?}
             bld_set.listener_options().enable(true);
             bld_set
                 .file_options()
-                .insert("bad_file.json".to_string(), bld_opts);
+                .insert("bad_file.toml".to_string(), bld_opts);
 
             let mut bld = RpcConfigBuilder::default();
             bld.listen().insert("label".to_string(), bld_set);

@@ -98,6 +98,13 @@ pub(crate) struct StreamReactor {
     ///   * it lets the `StreamReactor` know if the `ForwardReactor` has shut down:
     ///     we select! on this MPSC channel in the main loop, so if the `ForwardReactor`
     ///     shuts down, we will get EOS upon calling `.next()`)
+    ///
+    /// NOTE: The channel should have relatively little buffering in order
+    /// for XON/XOFF-based flow control to work correctly.
+    /// This flow control requires us to know how many incoming messages are
+    /// buffered on each stream so that we can send an XOFF when appropriate.
+    /// If adding more than a relatively small amount of buffering,
+    /// we'll need to consider that buffering in the flow control code somehow.
     cell_rx: mpsc::Receiver<CtrlMsg>,
     /// Sender for sending Tor stream data to [`BackwardReactor`](super::BackwardReactor).
     bwd_tx: mpsc::Sender<ReadyStreamMsg>,
@@ -118,7 +125,6 @@ pub(crate) struct StreamReactor {
     memquota: CircuitAccount,
 }
 
-#[allow(unused)] // TODO(relay)
 impl StreamReactor {
     /// Create a new [`StreamReactor`].
     #[allow(clippy::too_many_arguments)] // TODO
@@ -157,8 +163,6 @@ impl StreamReactor {
     /// and the `cells_rx` MPSC stream for stream messages received
     /// from the `ForwardReactor` that need to be delivered to the application streams.
     async fn run_once(&mut self) -> StdResult<(), ReactorError> {
-        use postage::prelude::{Sink as _, Stream as _};
-
         // Garbage-collect all halfstreams that have expired.
         //
         // Note: this will iterate over the closed streams of this hop.
@@ -172,14 +176,14 @@ impl StreamReactor {
             .expect("poisoned lock")
             .remove_expired_halfstreams(self.time_provider.now());
 
-        let mut streams = Arc::clone(self.hop.stream_map());
+        let streams = Arc::clone(self.hop.stream_map());
         let can_send = self
             .hop
             .ccontrol()
             .lock()
             .expect("poisoned lock")
             .can_send();
-        let mut ready_streams_fut = future::poll_fn(move |cx| {
+        let ready_streams_fut = future::poll_fn(move |cx| {
             if !can_send {
                 // We can't send anything on this hop that counts towards SENDME windows.
                 //
@@ -196,7 +200,7 @@ impl StreamReactor {
                 //     inside BackwardReactorCmd::HandleMsg
                 //   * XON will be initiated by StreamTarget::drain_rate_update(),
                 //     by sending a control message to the reactor
-                //     (TODO(relay): not yet implemented)\
+                //     (TODO(relay): not yet implemented)
                 return Poll::Pending;
             }
 

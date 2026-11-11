@@ -24,6 +24,7 @@
 #![warn(clippy::needless_borrow)]
 #![warn(clippy::needless_pass_by_value)]
 #![warn(clippy::option_option)]
+#![warn(clippy::or_fun_call)]
 #![deny(clippy::print_stderr)]
 #![deny(clippy::print_stdout)]
 #![warn(clippy::rc_buffer)]
@@ -50,6 +51,8 @@
 
 // TODO DIRMIRROR: Remove this before release.
 #![allow(dead_code)]
+// TODO: add to the list maintained by maint/add_warning once it's available on all crates
+#![warn(unnameable_types)]
 
 mod database;
 pub mod err;
